@@ -14,7 +14,7 @@ def graph_solution(die: List[Dice], colors: List[str]):
     mg.add_edges([edge for each_edge in edges for edge in each_edge])
 
     dice_id = [i for j in range(1, len(edges)) for i in [j] * 3]
-    mg.es['id'] = dice_id
+    mg.es["id"] = dice_id
 
     print_graph_list(g)
     print_multigraph(mg, dice_id)
@@ -31,7 +31,9 @@ def print_graph_list(graphs: List[ig.Graph]):
 def print_multigraph(multigraph, dice_id):
     visual_style = {"layout": multigraph.layout_grid(), "margin": 100,
                     "vertex_label": [color for color in multigraph.vs["name"]],
-                    "vertex_color": [vertex_name_to_color(v) for v in multigraph.vs["name"]]}
+                    "vertex_color": [vertex_name_to_color(v) for v in multigraph.vs["name"]],
+                    "edge_label": [dice_id for dice_id in multigraph.es["id"]],
+                    "edge_width": [dice_id + 1 for dice_id in multigraph.es["id"]]}
     ig.plot(multigraph, target='multigraph.svg', **visual_style)
 
 
