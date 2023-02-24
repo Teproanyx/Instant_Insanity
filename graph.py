@@ -16,19 +16,19 @@ def graph_solution(die: List[Dice], colors: List[str]):
     dice_id = [i for j in range(1, len(edges)) for i in [j] * 3]
     mg.es["id"] = dice_id
 
-    print_graph_list(g)
-    print_multigraph(mg, dice_id)
+    print_graph_list(g, 'cube')
+    print_multigraph(mg)
 
 
-def print_graph_list(graphs: List[ig.Graph]):
+def print_graph_list(graphs: List[ig.Graph], out_filename):
     for i, graph in enumerate(graphs):
         visual_style = {"layout": graph.layout_grid(), "margin": 50,
                         "vertex_label": [color for color in graph.vs["name"]],
                         "vertex_color": [vertex_name_to_color(v) for v in graph.vs["name"]]}
-        ig.plot(graph, target='cube'+str(i)+'.svg', **visual_style)
+        ig.plot(graph, target=out_filename + str(i) + '.svg', **visual_style)
 
 
-def print_multigraph(multigraph, dice_id):
+def print_multigraph(multigraph):
     visual_style = {"layout": multigraph.layout_grid(), "margin": 100,
                     "vertex_label": [color for color in multigraph.vs["name"]],
                     "vertex_color": [vertex_name_to_color(v) for v in multigraph.vs["name"]],
