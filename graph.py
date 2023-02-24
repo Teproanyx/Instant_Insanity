@@ -23,23 +23,29 @@ def graph_solution(die: List[Dice], colors: List[str]):
 def print_graph_list(graphs: List[ig.Graph]):
     for i, graph in enumerate(graphs):
         visual_style = {"layout": graph.layout_grid(), "margin": 50,
-                        "vertex_label": [color for color in graph.vs["name"]]}
+                        "vertex_label": [color for color in graph.vs["name"]],
+                        "vertex_color": [vertex_name_to_color(v) for v in graph.vs["name"]]}
         ig.plot(graph, target='cube'+str(i)+'.svg', **visual_style)
 
 
-def print_multigraph(mg, dice_id):
-    visual_style = {"layout": mg.layout_grid(), "margin": 100, "vertex_label": [color for color in mg.vs["name"]],
-                    "edge_width": [1 + 2 * (n - 1) for n in dice_id], "edge_color": [edge_to_color(e) for e in dice_id]}
-    ig.plot(mg, target='multigraph.svg', **visual_style)
+def print_multigraph(multigraph, dice_id):
+    visual_style = {"layout": multigraph.layout_grid(), "margin": 100,
+                    "vertex_label": [color for color in multigraph.vs["name"]],
+                    "vertex_color": [vertex_name_to_color(v) for v in multigraph.vs["name"]]}
+    ig.plot(multigraph, target='multigraph.svg', **visual_style)
 
 
-def edge_to_color(edge: int) -> str:
+def vertex_name_to_color(edge: str) -> str:
     match edge:
-        case 1:
+        case 'R':
             return 'red'
-        case 2:
+        case 'B':
             return 'blue'
-        case 3:
+        case 'G':
             return 'green'
+        case 'W':
+            return 'white'
+        case 'Y':
+            return 'yellow'
         case _:
             return 'black'
