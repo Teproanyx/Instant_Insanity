@@ -16,13 +16,21 @@ def graph_solution(die: List[Dice], colors: List[str]):
     dice_id = [i for j in range(1, len(edges)) for i in [j] * 3]
     mg.es['id'] = dice_id
 
-    print_multigraph(dice_id, mg)
+    print_graph_list(g)
+    print_multigraph(mg, dice_id)
 
 
-def print_multigraph(dice_id, mg):
+def print_graph_list(graphs: List[ig.Graph]):
+    for i, graph in enumerate(graphs):
+        visual_style = {"layout": graph.layout_grid(), "margin": 50,
+                        "vertex_label": [color for color in graph.vs["name"]]}
+        ig.plot(graph, target='cube'+str(i)+'.svg', **visual_style)
+
+
+def print_multigraph(mg, dice_id):
     visual_style = {"layout": mg.layout_grid(), "margin": 100, "edge_width": [1 + 2 * (n - 1) for n in dice_id],
                     "edge_color": [edge_to_color(e) for e in dice_id]}
-    ig.plot(mg, target='test.svg', **visual_style)
+    ig.plot(mg, target='multigraph.svg', **visual_style)
 
 
 def edge_to_color(edge: int) -> str:
