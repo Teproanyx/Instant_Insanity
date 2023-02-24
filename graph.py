@@ -28,8 +28,8 @@ def print_graph_list(graphs: List[ig.Graph]):
 
 
 def print_multigraph(mg, dice_id):
-    visual_style = {"layout": mg.layout_grid(), "margin": 100, "edge_width": [1 + 2 * (n - 1) for n in dice_id],
-                    "edge_color": [edge_to_color(e) for e in dice_id]}
+    visual_style = {"layout": mg.layout_grid(), "margin": 100, "vertex_label": [color for color in mg.vs["name"]],
+                    "edge_width": [1 + 2 * (n - 1) for n in dice_id], "edge_color": [edge_to_color(e) for e in dice_id]}
     ig.plot(mg, target='multigraph.svg', **visual_style)
 
 
