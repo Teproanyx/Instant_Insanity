@@ -1,14 +1,12 @@
-import glob
-import os
 from typing import List
 
+from cleanup import cleanup
 from dice import Dice
 from graph import graph_solution
 
 
 def main():
-    for f in glob.glob("*.svg"):
-        os.remove(f)
+    cleanup()
 
     color_set = list(input("Input Color Set: "))
     print("Input die configuration:")
