@@ -26,7 +26,8 @@ def graph_solution(die: List[Dice], colors: List[str]):
 
     solution_set = non_overlapping_graphs(filtered_subgraph, colors)
 
-    print_graph_list([y for x in solution_set for y in x], "debug")
+    for i, solution in enumerate(solution_set):
+        print_graph_list(list(solution), "solution" + str(i+1) + " set")
 
 
 def non_overlapping_graphs(subgraph: List[ig.Graph], colors: List[str]) -> List[Tuple[ig.Graph, ig.Graph]]:
@@ -35,12 +36,6 @@ def non_overlapping_graphs(subgraph: List[ig.Graph], colors: List[str]) -> List[
         if not is_overlapping(subgraph1, subgraph2):
             directed_subgraph1 = get_directed_graph(subgraph1)
             directed_subgraph2 = get_directed_graph(subgraph2)
-            # union = ig.Graph(n=len(colors), vertex_attrs={"name": colors}, edges=directed_subgraph1.get_edgelist()
-            # + directed_subgraph2.get_edgelist(), edge_attrs={"id": list(range(1, subgraph1.ecount() + 1))},
-            # directed=True) if union.maxdegree(mode='in') != 2 or union.maxdegree(mode='out') != 2:
-            # directed_subgraph2 = ig.Graph(n=len(colors), vertex_attrs={"name": colors}, edges=[(y, x) for x,
-            # y in directed_subgraph2.get_edgelist()], edge_attrs={"id": list(range(1, subgraph1.ecount() + 1))},
-            # directed=True)
             no_overlap_union.append((directed_subgraph1, directed_subgraph2))
     return no_overlap_union
 
