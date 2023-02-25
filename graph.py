@@ -26,7 +26,7 @@ def graph_solution(die: List[Dice], colors: List[str]) -> List[List[Dice]]:
     filtered_subgraph = get_subgraph_deg2(g, colors)
     print_graph_list(filtered_subgraph, 'subgraph')
 
-    solution_set = non_overlapping_graphs(filtered_subgraph, colors)
+    solution_set = non_overlapping_graphs(filtered_subgraph)
 
     dice_solution = []
     for i, solution in enumerate(solution_set):
