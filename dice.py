@@ -23,7 +23,7 @@ class Dice:
         self.down, self.front, self.up, self.back = self.front, self.up, self.back, self.down
 
     def __str__(self) -> str:
-        return f"\t{self.up}\n{self.left}\t{self.front}\t{self.right}\n\t{self.down}\n\t{self.back}"
+        return self.up + self.left + self.front + self.right + self.down + self.back
 
     def __eq__(self, other) -> bool:
         return self.front == other.front and self.back == other.back and self.left == other.left and \
