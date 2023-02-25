@@ -24,16 +24,26 @@ def graph_solution(die: List[Dice], colors: List[str]):
     filtered_subgraph = get_subgraph_deg2(g, colors)
     print_graph_list(filtered_subgraph, 'subgraph')
 
+    solution_graphs = []
     for subgraph1, subgraph2 in itertools.combinations(filtered_subgraph, 2):
-        pass  # TODO
+        if not is_overlapping(subgraph1, subgraph2):
+            new_solution = ig.Graph(n=4, vertex_attrs={"name": colors})
+            for i, (edge1, edge2) in enumerate(zip(subgraph1.get_edgelist(), subgraph2.get_edgelist())):
+                new_solution.add_edges([edge1, edge2])
+                new_solution.es[2*i:2*i + 2]["id"] = i + 1
+            solution_graphs.append(new_solution)
+    print_graph_list(solution_graphs, "solution")
 
 
-def get_subgraph_deg2(graph: List[ig.Graph], colors: List[str]):
+def is_overlapping(graph1: ig.Graph, graph2: ig.Graph) -> bool:
+    return any((e1 == e2 for e1, e2 in zip(graph1.get_edgelist(), graph2.get_edgelist())))
+
+
+def get_subgraph_deg2(graph: List[ig.Graph], colors: List[str]) -> List[ig.Graph]:
     subgraph = [ig.Graph(n=4, vertex_attrs={"name": colors}, edges=edge_list,
                          edge_attrs={"id": [i + 1 for i in range(len(edge_list))]})
                 for edge_list in itertools.product(*[graph.get_edgelist() for graph in graph])]
     return [graph for graph in subgraph if all((vertex.degree() == 2 for vertex in graph.vs))]
-
 
 
 def print_graph_list(graphs: List[ig.Graph], output: str):
