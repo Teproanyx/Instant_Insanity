@@ -3,6 +3,7 @@ import os
 
 
 def cleanup():
+    """Cleanup svg files"""
     for f in glob.glob("*.svg"):
         os.remove(f)
 

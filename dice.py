@@ -30,7 +30,9 @@ class Dice:
             self.right == other.right and self.up == other.up and self.down == other.down
 
     def print_dice(self):
+        """Print die cube in flattened view"""
         print(f"\t{self.up}\n{self.left}\t{self.front}\t{self.right}\n\t{self.down}\n\t{self.back}")
 
-    def to_edge(self):
+    def to_edgelist(self):
+        """Turn Dice object into an edgelist for graphing"""
         return [(self.up, self.down), (self.front, self.back), (self.left, self.right)]

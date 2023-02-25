@@ -6,28 +6,35 @@ import igraph as ig
 from dice import Dice
 
 
-def graph_solution(die: List[Dice], colors: List[str]) -> List[List[Dice]]:
-    edges = [dices.to_edge() for dices in die]
+def graph_solution(dice: List[Dice], colors: List[str]) -> List[List[Dice]]:
+    """Given the set of dice and colors of the faces, find the list of solution in the form of 4 set of dice"""
+    # Turn dice to edge list
+    edges = [dices.to_edgelist() for dices in dice]
 
+    # Create each dice sub graph and give them their dice no. as id
     g = [ig.Graph(n=len(colors), vertex_attrs={"name": colors}) for i in range(len(edges))]
     for i, (graph, edge_list) in enumerate(zip(g, edges)):
         graph.add_edges(edge_list)
         graph.es['id'] = i + 1
 
+    # Create the fused multigraph of the four dice and assign the edge their id
     mg = ig.Graph(n=4, vertex_attrs={"name": colors})
     mg.add_edges([edge for each_edge in edges for edge in each_edge])
-
     dice_id = [i for j in range(1, len(edges) + 1) for i in [j] * 3]
     mg.es["id"] = dice_id
 
-    print_graph_list(g, 'cube')
+    # Output the graphs
+    print_graph_list(g, "cube")
     print_graph(mg, "multigraph")
 
+    # Get the subgraphs with vertices degree of 2 and edges with unique id(edges from different dice)
     filtered_subgraph = get_subgraph_deg2(g, colors)
     print_graph_list(filtered_subgraph, 'subgraph')
 
+    # Get pairs of subgraphs who don't overlap with each other
     solution_set = non_overlapping_graphs(filtered_subgraph)
 
+    # Output each set of solution subgraphs and turn them back to Dice object
     dice_solution = []
     for i, solution in enumerate(solution_set):
         print_graph_list(list(solution), "solution" + str(i + 1) + " set")
