@@ -44,6 +44,7 @@ def graph_solution(dice: List[Dice], colors: List[str]) -> List[List[Dice]]:
 
 
 def dgraph_to_dice(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Dice]:
+    """Turn directed graph into set of 4 Dice object with unknown up or down face"""
     dices = []
     for front_back, left_right in zip(dgraph1.es, dgraph2.es):
         front = dgraph1.vs[front_back.source]["name"]
@@ -57,11 +58,13 @@ def dgraph_to_dice(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Dice]:
 
 
 def print_graph_list(graphs: List[ig.Graph], output: str):
+    """print_graph but with indexing output for list"""
     for i, graph in enumerate(graphs):
         print_graph(graph, output + str(i + 1))
 
 
 def print_graph(graph: ig.Graph, output: str):
+    """Draw the graph object and plot it to output.svg"""
     visual_style = {"layout": graph.layout_grid(), "margin": 100,
                     "vertex_label": [color for color in graph.vs["name"]],
                     "vertex_label_size": 30,
@@ -75,16 +78,18 @@ def print_graph(graph: ig.Graph, output: str):
 
 
 def non_overlapping_graphs(subgraph: List[ig.Graph]) -> List[Tuple[ig.Graph, ig.Graph]]:
+    """Get pairs of subgraphs combination that don't overlap each other based on edge attributes from a list"""
     no_overlap_graphs = []
     for subgraph1, subgraph2 in itertools.combinations(subgraph, 2):
         if not is_overlapping(subgraph1, subgraph2):
-            directed_subgraph1 = get_directed_graph(subgraph1)
-            directed_subgraph2 = get_directed_graph(subgraph2)
+            directed_subgraph1 = get_directed_cyclic_graph(subgraph1)
+            directed_subgraph2 = get_directed_cyclic_graph(subgraph2)
             no_overlap_graphs.append((directed_subgraph1, directed_subgraph2))
     return no_overlap_graphs
 
 
-def get_directed_graph(g: ig.Graph) -> ig.Graph:
+def get_directed_cyclic_graph(g: ig.Graph) -> ig.Graph:
+    """Turn an undirected graph into a directed cyclic graph"""
     directed_graph = ig.Graph(n=g.vcount(), vertex_attrs={"name": [v["name"] for v in g.vs]}, directed=True)
     for edge in g.es:
         if directed_graph.vs[edge.source].outdegree() == 0 and directed_graph.vs[edge.target].indegree() == 0:
@@ -102,17 +107,20 @@ def get_directed_graph(g: ig.Graph) -> ig.Graph:
 
 
 def is_overlapping(graph1: ig.Graph, graph2: ig.Graph) -> bool:
+    """Given 2 graphs, find if edges with the same index intersect"""
     return any((e1 == e2 for e1, e2 in zip(graph1.get_edgelist(), graph2.get_edgelist())))
 
 
 def get_subgraph_deg2(graph: List[ig.Graph], colors: List[str]) -> List[ig.Graph]:
+    """Generate all subgraphs where every vertex have a degree of 2"""
     subgraph = [ig.Graph(n=len(colors), vertex_attrs={"name": colors}, edges=edge_list,
                          edge_attrs={"id": [i + 1 for i in range(len(edge_list))]})
                 for edge_list in itertools.product(*[graph.get_edgelist() for graph in graph])]
-    return [graph for graph in subgraph if all((vertex.degree() == 2 for vertex in graph.vs))]
+    return [deg2_graph for deg2_graph in subgraph if all((vertex.degree() == 2 for vertex in deg2_graph.vs))]
 
 
 def vertex_name_to_color(edge: str) -> str:
+    """Return color based on string used as vertex name"""
     match edge:
         case 'R':
             return 'red'
@@ -129,6 +137,7 @@ def vertex_name_to_color(edge: str) -> str:
 
 
 def dice_id_to_color(d_id: int) -> str:
+    """Return color based on dice for better contrast in graph visualization"""
     match d_id:
         case 1:
             return 'cyan'
