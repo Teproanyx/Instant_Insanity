@@ -1,3 +1,4 @@
+import itertools
 from dice import Dice
 from typing import List
 import igraph as ig
@@ -18,8 +19,14 @@ def graph_solution(die: List[Dice], colors: List[str]):
     mg.es["id"] = dice_id
 
     print_graph_list(g, 'cube')
-    print_multigraph(mg)
+    print_graph(mg, "multigraph")
 
+    subgraph = [ig.Graph(n=4, vertex_attrs={"name": colors}, edges=edge_list,
+                         edge_attrs={"id": [i + 1 for i in range(len(edge_list))]})
+                for edge_list in itertools.product(*[graph.get_edgelist() for graph in g])]
+
+    subgraph_degree_2 = [graph for graph in subgraph if all((vertex.degree() == 2 for vertex in graph.vs))]
+    print_graph_list(subgraph_degree_2, 'subgraph')
 
 
 def print_graph_list(graphs: List[ig.Graph], output: str):
