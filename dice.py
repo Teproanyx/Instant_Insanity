@@ -29,5 +29,8 @@ class Dice:
         return self.front == other.front and self.back == other.back and self.left == other.left and \
             self.right == other.right and self.up == other.up and self.down == other.down
 
+    def print_dice(self):
+        print(f"\t{self.up}\n{self.left}\t{self.front}\t{self.right}\n\t{self.down}\n\t{self.back}")
+
     def to_edge(self):
         return [(self.up, self.down), (self.front, self.back), (self.left, self.right)]
