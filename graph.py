@@ -37,7 +37,10 @@ def print_graph_list(graphs: List[ig.Graph], output: str):
 def print_graph(graph: ig.Graph, output: str):
     visual_style = {"layout": graph.layout_grid(), "margin": 100,
                     "vertex_label": [color for color in graph.vs["name"]],
+                    "vertex_label_size": 30,
                     "vertex_color": [vertex_name_to_color(v) for v in graph.vs["name"]],
+                    "vertex_size": 50,
+                    "vertex_shape": "rectangle",
                     "edge_label": [dice_id for dice_id in graph.es["id"]],
                     "edge_width": [dice_id + 1 for dice_id in graph.es["id"]],
                     "edge_color": [dice_id_to_color(dice_id) for dice_id in graph.es["id"]]}
