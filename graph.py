@@ -128,6 +128,6 @@ def dice_id_to_color(d_id: int) -> str:
         case 2:
             return 'magenta'
         case 3:
-            return 'yellow'
+            return 'wheat'
         case _:
             return 'black'
