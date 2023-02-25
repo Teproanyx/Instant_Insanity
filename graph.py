@@ -7,7 +7,7 @@ import igraph as ig
 def graph_solution(die: List[Dice], colors: List[str]):
     edges = [dices.to_edge() for dices in die]
 
-    g = [ig.Graph(n=4, vertex_attrs={"name": colors}) for i in range(len(edges))]
+    g = [ig.Graph(n=len(colors), vertex_attrs={"name": colors}) for i in range(len(edges))]
     for i, (graph, edge_list) in enumerate(zip(g, edges)):
         graph.add_edges(edge_list)
         graph.es['id'] = i + 1
@@ -40,7 +40,7 @@ def is_overlapping(graph1: ig.Graph, graph2: ig.Graph) -> bool:
 
 
 def get_subgraph_deg2(graph: List[ig.Graph], colors: List[str]) -> List[ig.Graph]:
-    subgraph = [ig.Graph(n=4, vertex_attrs={"name": colors}, edges=edge_list,
+    subgraph = [ig.Graph(n=len(colors), vertex_attrs={"name": colors}, edges=edge_list,
                          edge_attrs={"id": [i + 1 for i in range(len(edge_list))]})
                 for edge_list in itertools.product(*[graph.get_edgelist() for graph in graph])]
     return [graph for graph in subgraph if all((vertex.degree() == 2 for vertex in graph.vs))]
