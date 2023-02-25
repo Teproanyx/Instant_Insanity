@@ -10,13 +10,11 @@ def main():
     for f in glob.glob("*.svg"):
         os.remove(f)
 
-    dice_set_1 = four_dice_set("RRWRGB", "RWWRBG", "BGBGRW", "GWWBRG")
-    dice_set_2 = four_dice_set("YWRYBW", "RRBYWB", "RBBWYY", "WWRBWY")
-    impossible_set = four_dice_set("BGYRBR", "BYYYGR", "GGBRYB", "BYGRGR")
+    color_set = list(input("Input Color Set: "))
+    print("Input die configuration:")
+    die_str = [input() for i in range(4)]
 
-    # graph_solution(dice_set_1, list("RGBW"))
-    solutions = graph_solution(dice_set_2, list("BWYR"))
-    # graph_solution(impossible_set, list("RGBY"))
+    solutions = graph_solution(four_dice_set(*die_str), color_set)
 
     for i, solution in enumerate(solutions):
         print("Solution #", i + 1)
