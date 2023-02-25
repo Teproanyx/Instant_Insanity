@@ -1,6 +1,6 @@
 import itertools
 from dice import Dice
-from typing import List
+from typing import List, Tuple
 import igraph as ig
 
 
@@ -24,20 +24,42 @@ def graph_solution(die: List[Dice], colors: List[str]):
     filtered_subgraph = get_subgraph_deg2(g, colors)
     print_graph_list(filtered_subgraph, 'subgraph')
 
-    solution_graphs = get_non_overlapping_graph_union(colors, filtered_subgraph)
+    solution_set = non_overlapping_graphs(filtered_subgraph, colors)
 
-    print_graph_list(solution_graphs, "solution")
+    print_graph_list([y for x in solution_set for y in x], "debug")
 
 
-def get_non_overlapping_graph_union(colors, filtered_subgraph) -> List[ig.Graph]:
+def non_overlapping_graphs(subgraph: List[ig.Graph], colors: List[str]) -> List[Tuple[ig.Graph, ig.Graph]]:
     no_overlap_union = []
-    for subgraph1, subgraph2 in itertools.combinations(filtered_subgraph, 2):
+    for subgraph1, subgraph2 in itertools.combinations(subgraph, 2):
         if not is_overlapping(subgraph1, subgraph2):
-            union = ig.Graph(n=len(colors), vertex_attrs={"name": colors},
-                             edges=subgraph1.get_edgelist() + subgraph2.get_edgelist(),
-                             edge_attrs={"id": list(range(1, subgraph1.ecount() + 1))})
-            no_overlap_union.append(union)
+            directed_subgraph1 = get_directed_graph(subgraph1)
+            directed_subgraph2 = get_directed_graph(subgraph2)
+            # union = ig.Graph(n=len(colors), vertex_attrs={"name": colors}, edges=directed_subgraph1.get_edgelist()
+            # + directed_subgraph2.get_edgelist(), edge_attrs={"id": list(range(1, subgraph1.ecount() + 1))},
+            # directed=True) if union.maxdegree(mode='in') != 2 or union.maxdegree(mode='out') != 2:
+            # directed_subgraph2 = ig.Graph(n=len(colors), vertex_attrs={"name": colors}, edges=[(y, x) for x,
+            # y in directed_subgraph2.get_edgelist()], edge_attrs={"id": list(range(1, subgraph1.ecount() + 1))},
+            # directed=True)
+            no_overlap_union.append((directed_subgraph1, directed_subgraph2))
     return no_overlap_union
+
+
+def get_directed_graph(g: ig.Graph) -> ig.Graph:
+    directed_graph = ig.Graph(n=g.vcount(), vertex_attrs={"name": [v["name"] for v in g.vs]}, directed=True)
+    for edge in g.es:
+        if directed_graph.vs[edge.source].outdegree() == 0 and directed_graph.vs[edge.target].indegree() == 0:
+            directed_graph.add_edge(edge.source, edge.target)
+        elif directed_graph.vs[edge.target].outdegree() == 0 and directed_graph.vs[edge.source].indegree() == 0:
+            directed_graph.add_edge(edge.target, edge.source)
+        else:
+            successor = directed_graph.vs[edge.target].successors()[0]
+            directed_graph.add_edge(successor, edge.target)
+            directed_graph.delete_edges(edge.target, successor)
+            directed_graph.add_edge(edge.target, edge.source)
+
+    directed_graph.es['id'] = list(range(1, len(g.es) + 1))
+    return directed_graph
 
 
 def is_overlapping(graph1: ig.Graph, graph2: ig.Graph) -> bool:
