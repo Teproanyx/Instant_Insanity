@@ -36,19 +36,6 @@ def graph_solution(die: List[Dice], colors: List[str]) -> List[List[Dice]]:
     return dice_solution
 
 
-def dgraph_to_dices(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Dice]:
-    dices = []
-    for front_back, left_right in zip(dgraph1.es, dgraph2.es):
-        front = dgraph1.vs[front_back.source]["name"]
-        back = dgraph1.vs[front_back.target]["name"]
-        left = dgraph2.vs[left_right.source]["name"]
-        right = dgraph2.vs[left_right.target]["name"]
-
-        dices.append(Dice(["X", left, front, right, "X", back]))
-
-    return dices
-
-
 def non_overlapping_graphs(subgraph: List[ig.Graph], colors: List[str]) -> List[Tuple[ig.Graph, ig.Graph]]:
     no_overlap_union = []
     for subgraph1, subgraph2 in itertools.combinations(subgraph, 2):
@@ -57,6 +44,24 @@ def non_overlapping_graphs(subgraph: List[ig.Graph], colors: List[str]) -> List[
             directed_subgraph2 = get_directed_graph(subgraph2)
             no_overlap_union.append((directed_subgraph1, directed_subgraph2))
     return no_overlap_union
+
+
+def print_graph_list(graphs: List[ig.Graph], output: str):
+    for i, graph in enumerate(graphs):
+        print_graph(graph, output + str(i + 1))
+
+
+def print_graph(graph: ig.Graph, output: str):
+    visual_style = {"layout": graph.layout_grid(), "margin": 100,
+                    "vertex_label": [color for color in graph.vs["name"]],
+                    "vertex_label_size": 30,
+                    "vertex_color": [vertex_name_to_color(v) for v in graph.vs["name"]],
+                    "vertex_size": 50,
+                    "vertex_shape": "rectangle",
+                    "edge_label": [dice_id for dice_id in graph.es["id"]],
+                    "edge_width": [dice_id + 1 for dice_id in graph.es["id"]],
+                    "edge_color": [dice_id_to_color(dice_id) for dice_id in graph.es["id"]]}
+    ig.plot(graph, target=output + '.svg', **visual_style)
 
 
 def get_directed_graph(g: ig.Graph) -> ig.Graph:
@@ -87,22 +92,17 @@ def get_subgraph_deg2(graph: List[ig.Graph], colors: List[str]) -> List[ig.Graph
     return [graph for graph in subgraph if all((vertex.degree() == 2 for vertex in graph.vs))]
 
 
-def print_graph_list(graphs: List[ig.Graph], output: str):
-    for i, graph in enumerate(graphs):
-        print_graph(graph, output + str(i + 1))
+def dgraph_to_dices(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Dice]:
+    dices = []
+    for front_back, left_right in zip(dgraph1.es, dgraph2.es):
+        front = dgraph1.vs[front_back.source]["name"]
+        back = dgraph1.vs[front_back.target]["name"]
+        left = dgraph2.vs[left_right.source]["name"]
+        right = dgraph2.vs[left_right.target]["name"]
 
+        dices.append(Dice(["X", left, front, right, "X", back]))
 
-def print_graph(graph: ig.Graph, output: str):
-    visual_style = {"layout": graph.layout_grid(), "margin": 100,
-                    "vertex_label": [color for color in graph.vs["name"]],
-                    "vertex_label_size": 30,
-                    "vertex_color": [vertex_name_to_color(v) for v in graph.vs["name"]],
-                    "vertex_size": 50,
-                    "vertex_shape": "rectangle",
-                    "edge_label": [dice_id for dice_id in graph.es["id"]],
-                    "edge_width": [dice_id + 1 for dice_id in graph.es["id"]],
-                    "edge_color": [dice_id_to_color(dice_id) for dice_id in graph.es["id"]]}
-    ig.plot(graph, target=output + '.svg', **visual_style)
+    return dices
 
 
 def vertex_name_to_color(edge: str) -> str:
