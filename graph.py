@@ -24,15 +24,20 @@ def graph_solution(die: List[Dice], colors: List[str]):
     filtered_subgraph = get_subgraph_deg2(g, colors)
     print_graph_list(filtered_subgraph, 'subgraph')
 
-    solution_graphs = []
+    solution_graphs = get_non_overlapping_graph_union(colors, filtered_subgraph)
+
+    print_graph_list(solution_graphs, "solution")
+
+
+def get_non_overlapping_graph_union(colors, filtered_subgraph) -> List[ig.Graph]:
+    no_overlap_union = []
     for subgraph1, subgraph2 in itertools.combinations(filtered_subgraph, 2):
         if not is_overlapping(subgraph1, subgraph2):
-            new_solution = ig.Graph(n=4, vertex_attrs={"name": colors})
-            for i, (edge1, edge2) in enumerate(zip(subgraph1.get_edgelist(), subgraph2.get_edgelist())):
-                new_solution.add_edges([edge1, edge2])
-                new_solution.es[2*i:2*i + 2]["id"] = i + 1
-            solution_graphs.append(new_solution)
-    print_graph_list(solution_graphs, "solution")
+            union = ig.Graph(n=len(colors), vertex_attrs={"name": colors},
+                             edges=subgraph1.get_edgelist() + subgraph2.get_edgelist(),
+                             edge_attrs={"id": list(range(1, subgraph1.ecount() + 1))})
+            no_overlap_union.append(union)
+    return no_overlap_union
 
 
 def is_overlapping(graph1: ig.Graph, graph2: ig.Graph) -> bool:
