@@ -75,13 +75,13 @@ def print_graph(graph: ig.Graph, output: str):
 
 
 def non_overlapping_graphs(subgraph: List[ig.Graph]) -> List[Tuple[ig.Graph, ig.Graph]]:
-    no_overlap_union = []
+    no_overlap_graphs = []
     for subgraph1, subgraph2 in itertools.combinations(subgraph, 2):
         if not is_overlapping(subgraph1, subgraph2):
             directed_subgraph1 = get_directed_graph(subgraph1)
             directed_subgraph2 = get_directed_graph(subgraph2)
-            no_overlap_union.append((directed_subgraph1, directed_subgraph2))
-    return no_overlap_union
+            no_overlap_graphs.append((directed_subgraph1, directed_subgraph2))
+    return no_overlap_graphs
 
 
 def get_directed_graph(g: ig.Graph) -> ig.Graph:
