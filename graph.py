@@ -21,12 +21,19 @@ def graph_solution(die: List[Dice], colors: List[str]):
     print_graph_list(g, 'cube')
     print_graph(mg, "multigraph")
 
+    filtered_subgraph = get_subgraph_deg2(g, colors)
+    print_graph_list(filtered_subgraph, 'subgraph')
+
+    for subgraph1, subgraph2 in itertools.combinations(filtered_subgraph, 2):
+        pass  # TODO
+
+
+def get_subgraph_deg2(graph: List[ig.Graph], colors: List[str]):
     subgraph = [ig.Graph(n=4, vertex_attrs={"name": colors}, edges=edge_list,
                          edge_attrs={"id": [i + 1 for i in range(len(edge_list))]})
-                for edge_list in itertools.product(*[graph.get_edgelist() for graph in g])]
+                for edge_list in itertools.product(*[graph.get_edgelist() for graph in graph])]
+    return [graph for graph in subgraph if all((vertex.degree() == 2 for vertex in graph.vs))]
 
-    subgraph_degree_2 = [graph for graph in subgraph if all((vertex.degree() == 2 for vertex in graph.vs))]
-    print_graph_list(subgraph_degree_2, 'subgraph')
 
 
 def print_graph_list(graphs: List[ig.Graph], output: str):
