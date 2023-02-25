@@ -1,3 +1,5 @@
+import glob
+import os
 from typing import List
 
 from dice import Dice
@@ -5,6 +7,9 @@ from graph import graph_solution
 
 
 def main():
+    for f in glob.glob("*.svg"):
+        os.remove(f)
+
     dice_set_1 = four_dice_set("RRWRGB", "RWWRBG", "BGBGRW", "GWWBRG")
     dice_set_2 = four_dice_set("YWRYBW", "RRBYWB", "RBBWYY", "WWRBWY")
     impossible_set = four_dice_set("BGYRBR", "BYYYGR", "GGBRYB", "BYGRGR")
