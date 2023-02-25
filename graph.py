@@ -14,7 +14,7 @@ def graph_solution(die: List[Dice], colors: List[str]):
     mg = ig.Graph(n=4, vertex_attrs={"name": colors})
     mg.add_edges([edge for each_edge in edges for edge in each_edge])
 
-    dice_id = [i for j in range(1, len(edges)+1) for i in [j] * 3]
+    dice_id = [i for j in range(1, len(edges) + 1) for i in [j] * 3]
     mg.es["id"] = dice_id
 
     print_graph_list(g, 'cube')
