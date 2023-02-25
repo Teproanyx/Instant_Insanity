@@ -9,6 +9,8 @@ def main():
     # impossible_set = four_dice_set("BGYRBR", "BYYYGR", "GGBRYB", "BYGRGR")
 
     graph_solution(dice_set_1, get_color_dice_set(dice_set_1[0]))
+    # graph_solution(dice_set_2, get_color_dice_set(dice_set_2[0]))
+    # graph_solution(impossible_set, get_color_dice_set(impossible_set[0]))
 
 
 def four_dice_set(dice1: str, dice2: str, dice3: str, dice4: str) -> List[Dice]:
