@@ -1,7 +1,9 @@
 import itertools
-from dice import Dice
 from typing import List, Tuple
+
 import igraph as ig
+
+from dice import Dice
 
 
 def graph_solution(die: List[Dice], colors: List[str]) -> List[List[Dice]]:
@@ -28,7 +30,7 @@ def graph_solution(die: List[Dice], colors: List[str]) -> List[List[Dice]]:
 
     dice_solution = []
     for i, solution in enumerate(solution_set):
-        print_graph_list(list(solution), "solution" + str(i+1) + " set")
+        print_graph_list(list(solution), "solution" + str(i + 1) + " set")
         dice_solution.append(dgraph_to_dices(*solution))
 
     return dice_solution

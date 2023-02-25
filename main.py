@@ -1,6 +1,7 @@
+from typing import List
+
 from dice import Dice
 from graph import graph_solution
-from typing import List
 
 
 def main():
@@ -13,7 +14,7 @@ def main():
     # graph_solution(impossible_set, list("RGBY"))
 
     for i, solution in enumerate(solutions):
-        print("Solution #", i+1)
+        print("Solution #", i + 1)
         for each_dice in solution:
             each_dice.print_dice()
 
