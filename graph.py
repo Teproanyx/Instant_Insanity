@@ -36,7 +36,7 @@ def graph_solution(die: List[Dice], colors: List[str]) -> List[List[Dice]]:
     return dice_solution
 
 
-def non_overlapping_graphs(subgraph: List[ig.Graph], colors: List[str]) -> List[Tuple[ig.Graph, ig.Graph]]:
+def non_overlapping_graphs(subgraph: List[ig.Graph]) -> List[Tuple[ig.Graph, ig.Graph]]:
     no_overlap_union = []
     for subgraph1, subgraph2 in itertools.combinations(subgraph, 2):
         if not is_overlapping(subgraph1, subgraph2):
