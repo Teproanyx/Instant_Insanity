@@ -4,7 +4,7 @@ from typing import List, Tuple
 import igraph as ig
 
 
-def graph_solution(die: List[Dice], colors: List[str]):
+def graph_solution(die: List[Dice], colors: List[str]) -> List[List[Dice]]:
     edges = [dices.to_edge() for dices in die]
 
     g = [ig.Graph(n=len(colors), vertex_attrs={"name": colors}) for i in range(len(edges))]
@@ -26,8 +26,25 @@ def graph_solution(die: List[Dice], colors: List[str]):
 
     solution_set = non_overlapping_graphs(filtered_subgraph, colors)
 
+    dice_solution = []
     for i, solution in enumerate(solution_set):
         print_graph_list(list(solution), "solution" + str(i+1) + " set")
+        dice_solution.append(dgraph_to_dices(*solution))
+
+    return dice_solution
+
+
+def dgraph_to_dices(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Dice]:
+    dices = []
+    for front_back, left_right in zip(dgraph1.es, dgraph2.es):
+        front = dgraph1.vs[front_back.source]["name"]
+        back = dgraph1.vs[front_back.target]["name"]
+        left = dgraph2.vs[left_right.source]["name"]
+        right = dgraph2.vs[left_right.target]["name"]
+
+        dices.append(Dice(["X", left, front, right, "X", back]))
+
+    return dices
 
 
 def non_overlapping_graphs(subgraph: List[ig.Graph], colors: List[str]) -> List[Tuple[ig.Graph, ig.Graph]]:
