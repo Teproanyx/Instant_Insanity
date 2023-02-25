@@ -9,7 +9,7 @@ from dice import Dice
 def graph_solution(dice: List[Dice], colors: List[str]) -> List[List[Dice]]:
     """Given the set of dice and colors of the faces, find the list of solution in the form of 4 set of dice"""
     # Turn dice to edge list
-    edges = [dices.to_edgelist() for dices in dice]
+    edges = [die.to_edgelist() for die in dice]
 
     # Create each dice sub graph and give them their dice no. as id
     g = [ig.Graph(n=len(colors), vertex_attrs={"name": colors}) for i in range(len(edges))]
@@ -38,19 +38,22 @@ def graph_solution(dice: List[Dice], colors: List[str]) -> List[List[Dice]]:
     dice_solution = []
     for i, solution in enumerate(solution_set):
         print_graph_list(list(solution), "solution" + str(i + 1) + " set")
-        dice_solution.append(dgraph_to_dices(*solution))
+        dice_solution.append(dgraph_to_dice(*solution))
 
     return dice_solution
 
 
-def non_overlapping_graphs(subgraph: List[ig.Graph]) -> List[Tuple[ig.Graph, ig.Graph]]:
-    no_overlap_union = []
-    for subgraph1, subgraph2 in itertools.combinations(subgraph, 2):
-        if not is_overlapping(subgraph1, subgraph2):
-            directed_subgraph1 = get_directed_graph(subgraph1)
-            directed_subgraph2 = get_directed_graph(subgraph2)
-            no_overlap_union.append((directed_subgraph1, directed_subgraph2))
-    return no_overlap_union
+def dgraph_to_dice(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Dice]:
+    dices = []
+    for front_back, left_right in zip(dgraph1.es, dgraph2.es):
+        front = dgraph1.vs[front_back.source]["name"]
+        back = dgraph1.vs[front_back.target]["name"]
+        left = dgraph2.vs[left_right.source]["name"]
+        right = dgraph2.vs[left_right.target]["name"]
+
+        dices.append(Dice(["X", left, front, right, "X", back]))
+
+    return dices
 
 
 def print_graph_list(graphs: List[ig.Graph], output: str):
@@ -69,6 +72,16 @@ def print_graph(graph: ig.Graph, output: str):
                     "edge_width": [dice_id + 1 for dice_id in graph.es["id"]],
                     "edge_color": [dice_id_to_color(dice_id) for dice_id in graph.es["id"]]}
     ig.plot(graph, target=output + '.svg', **visual_style)
+
+
+def non_overlapping_graphs(subgraph: List[ig.Graph]) -> List[Tuple[ig.Graph, ig.Graph]]:
+    no_overlap_union = []
+    for subgraph1, subgraph2 in itertools.combinations(subgraph, 2):
+        if not is_overlapping(subgraph1, subgraph2):
+            directed_subgraph1 = get_directed_graph(subgraph1)
+            directed_subgraph2 = get_directed_graph(subgraph2)
+            no_overlap_union.append((directed_subgraph1, directed_subgraph2))
+    return no_overlap_union
 
 
 def get_directed_graph(g: ig.Graph) -> ig.Graph:
@@ -97,19 +110,6 @@ def get_subgraph_deg2(graph: List[ig.Graph], colors: List[str]) -> List[ig.Graph
                          edge_attrs={"id": [i + 1 for i in range(len(edge_list))]})
                 for edge_list in itertools.product(*[graph.get_edgelist() for graph in graph])]
     return [graph for graph in subgraph if all((vertex.degree() == 2 for vertex in graph.vs))]
-
-
-def dgraph_to_dices(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Dice]:
-    dices = []
-    for front_back, left_right in zip(dgraph1.es, dgraph2.es):
-        front = dgraph1.vs[front_back.source]["name"]
-        back = dgraph1.vs[front_back.target]["name"]
-        left = dgraph2.vs[left_right.source]["name"]
-        right = dgraph2.vs[left_right.target]["name"]
-
-        dices.append(Dice(["X", left, front, right, "X", back]))
-
-    return dices
 
 
 def vertex_name_to_color(edge: str) -> str:
