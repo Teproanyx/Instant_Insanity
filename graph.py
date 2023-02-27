@@ -3,58 +3,58 @@ from typing import List, Tuple
 
 import igraph as ig
 
-from dice import Dice
+from cube import Cube
 
 
-def graph_solution(dice: List[Dice], colors: List[str]) -> List[List[Dice]]:
-    """Given the set of dice and colors of the faces, find the list of solution in the form of 4 set of dice"""
-    # Turn dice to edge list
-    edges = [die.to_edgelist() for die in dice]
+def graph_solution(cube: List[Cube], colors: List[str]) -> List[List[Cube]]:
+    """Given the set of Cube and colors of the faces, find the list of solution in the form of 4 set of Cube"""
+    # Turn cube to edge list
+    edges = [c.to_edgelist() for c in cube]
 
-    # Create each dice sub graph and give them their dice no. as id
+    # Create each cube sub graph and give them their cube no. as id
     g = [ig.Graph(n=len(colors), vertex_attrs={"name": colors}) for i in range(len(edges))]
     for i, (graph, edge_list) in enumerate(zip(g, edges)):
         graph.add_edges(edge_list)
         graph.es['id'] = i + 1
 
-    # Create the fused multigraph of the four dice and assign the edge their id
+    # Create the fused multigraph of the four cube and assign the edge their id
     mg = ig.Graph(n=4, vertex_attrs={"name": colors})
     mg.add_edges([edge for each_edge in edges for edge in each_edge])
-    dice_id = [i for j in range(1, len(edges) + 1) for i in [j] * 3]
-    mg.es["id"] = dice_id
+    cube = [i for j in range(1, len(edges) + 1) for i in [j] * 3]
+    mg.es["id"] = cube
 
     # Output the graphs
     print_graph_list(g, "cube")
     print_graph(mg, "multigraph")
 
-    # Get the subgraphs with vertices degree of 2 and edges with unique id(edges from different dice)
+    # Get the subgraphs with vertices degree of 2 and edges with unique id(edges from different cube)
     filtered_subgraph = get_subgraph_deg2(g, colors)
     print_graph_list(filtered_subgraph, 'subgraph')
 
     # Get pairs of subgraphs who don't overlap with each other
     solution_set = non_overlapping_graphs(filtered_subgraph)
 
-    # Output each set of solution subgraphs and turn them back to Dice object
-    dice_solution = []
+    # Output each set of solution subgraphs and turn them back to Cube object
+    cube_solutions = []
     for i, solution in enumerate(solution_set):
         print_graph_list(list(solution), "solution" + str(i + 1) + " set")
-        dice_solution.append(dgraph_to_dice(*solution))
+        cube_solutions.append(dgraph_to_cube(*solution))
 
-    return dice_solution
+    return cube_solutions
 
 
-def dgraph_to_dice(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Dice]:
-    """Turn directed graph into set of 4 Dice object with unknown up or down face"""
-    dices = []
+def dgraph_to_cube(dgraph1: ig.Graph, dgraph2: ig.Graph) -> List[Cube]:
+    """Turn directed graph into set of 4 Cube object with unknown up or down face"""
+    cubes = []
     for front_back, left_right in zip(dgraph1.es, dgraph2.es):
         front = dgraph1.vs[front_back.source]["name"]
         back = dgraph1.vs[front_back.target]["name"]
         left = dgraph2.vs[left_right.source]["name"]
         right = dgraph2.vs[left_right.target]["name"]
 
-        dices.append(Dice(["X", left, front, right, "X", back]))
+        cubes.append(Cube(["X", left, front, right, "X", back]))
 
-    return dices
+    return cubes
 
 
 def print_graph_list(graphs: List[ig.Graph], output: str):
@@ -71,9 +71,9 @@ def print_graph(graph: ig.Graph, output: str):
                     "vertex_color": [vertex_name_to_color(v) for v in graph.vs["name"]],
                     "vertex_size": 50,
                     "vertex_shape": "rectangle",
-                    "edge_label": [dice_id for dice_id in graph.es["id"]],
-                    "edge_width": [dice_id + 1 for dice_id in graph.es["id"]],
-                    "edge_color": [dice_id_to_color(dice_id) for dice_id in graph.es["id"]]}
+                    "edge_label": [cube_id for cube_id in graph.es["id"]],
+                    "edge_width": [cube_id + 1 for cube_id in graph.es["id"]],
+                    "edge_color": [cube_id_to_color(cube_id) for cube_id in graph.es["id"]]}
     ig.plot(graph, target=output + '.svg', **visual_style)
 
 
@@ -136,8 +136,8 @@ def vertex_name_to_color(edge: str) -> str:
             return 'black'
 
 
-def dice_id_to_color(d_id: int) -> str:
-    """Return color based on dice for better contrast in graph visualization"""
+def cube_id_to_color(d_id: int) -> str:
+    """Return color based on cube for better contrast in graph visualization"""
     match d_id:
         case 1:
             return 'cyan'

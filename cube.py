@@ -1,7 +1,7 @@
 from typing import List
 
 
-class Dice:
+class Cube:
     def __init__(self, face: List[str]):
         self.up = face[0]
         self.left = face[1]
@@ -29,10 +29,10 @@ class Dice:
         return self.front == other.front and self.back == other.back and self.left == other.left and \
             self.right == other.right and self.up == other.up and self.down == other.down
 
-    def print_dice(self):
-        """Print die cube in flattened view"""
+    def print_cube(self):
+        """Print cube in flattened view"""
         print(f"\t{self.up}\n{self.left}\t{self.front}\t{self.right}\n\t{self.down}\n\t{self.back}")
 
     def to_edgelist(self):
-        """Turn Dice object into an edgelist for graphing"""
+        """Turn Cube object into an edgelist for graphing"""
         return [(self.up, self.down), (self.front, self.back), (self.left, self.right)]
